@@ -8,6 +8,7 @@
         <div v-if="post">
             <div>{{ post.title}}</div>
             <div v-for="image in post.images">
+                <img :src="image.preview_url" alt="">
                 <img :src="image.url" alt="">
             </div>
         </div>
@@ -43,6 +44,9 @@ export default {
             data.append('title', this.title)
             this.title = ''
             axios.post('/api/posts', data)
+            .then( res => {
+                this.getPost();
+            })
         },
         getPost() {
             axios.get('/api/posts')

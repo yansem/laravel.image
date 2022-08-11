@@ -16,6 +16,7 @@ class IndexController extends Controller
     public function __invoke()
     {
         $post = Post::latest()->first();
-        return new PostResource($post);
+        if($post) return new PostResource($post);
+        return response()->json(['message' => 'empty']);
     }
 }
