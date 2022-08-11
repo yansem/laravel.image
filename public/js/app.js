@@ -5324,13 +5324,20 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "Index",
   data: function data() {
     return {
       dropzone: null,
-      title: ''
+      title: '',
+      post: null
     };
   },
   mounted: function mounted() {
@@ -5338,6 +5345,7 @@ __webpack_require__.r(__webpack_exports__);
       url: 'api/posts',
       autoProcessQueue: false
     });
+    this.getPost();
   },
   methods: {
     store: function store() {
@@ -5345,7 +5353,6 @@ __webpack_require__.r(__webpack_exports__);
 
       var data = new FormData();
       var files = this.dropzone.getAcceptedFiles();
-      console.log(files);
       files.forEach(function (file) {
         data.append('images[]', file);
 
@@ -5354,6 +5361,14 @@ __webpack_require__.r(__webpack_exports__);
       data.append('title', this.title);
       this.title = '';
       axios.post('/api/posts', data);
+    },
+    getPost: function getPost() {
+      var _this2 = this;
+
+      axios.get('/api/posts').then(function (res) {
+        console.log(res.data.data);
+        _this2.post = res.data.data;
+      });
     }
   }
 });
@@ -28290,6 +28305,22 @@ var render = function () {
         },
       },
     }),
+    _vm._v(" "),
+    _vm.post
+      ? _c(
+          "div",
+          [
+            _c("div", [_vm._v(_vm._s(_vm.post.title))]),
+            _vm._v(" "),
+            _vm._l(_vm.post.images, function (image) {
+              return _c("div", [
+                _c("img", { attrs: { src: image.url, alt: "" } }),
+              ])
+            }),
+          ],
+          2
+        )
+      : _vm._e(),
   ])
 }
 var staticRenderFns = []

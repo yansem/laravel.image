@@ -5,6 +5,12 @@
             Upload
         </div>
         <input @click.prevent="store" type="submit" class="btn btn-primary">
+        <div v-if="post">
+            <div>{{ post.title}}</div>
+            <div v-for="image in post.images">
+                <img :src="image.url" alt="">
+            </div>
+        </div>
     </div>
 </template>
 
@@ -15,7 +21,8 @@ export default {
     data() {
         return {
             dropzone: null,
-            title: ''
+            title: '',
+            post: null
         }
     },
     mounted() {
@@ -23,12 +30,12 @@ export default {
             url: 'api/posts',
             autoProcessQueue: false
         })
+        this.getPost();
     },
     methods: {
         store() {
             const data = new FormData();
             const files = this.dropzone.getAcceptedFiles();
-            console.log(files)
             files.forEach( file => {
                 data.append('images[]', file)
                 this.dropzone.removeFile(file)
@@ -36,6 +43,13 @@ export default {
             data.append('title', this.title)
             this.title = ''
             axios.post('/api/posts', data)
+        },
+        getPost() {
+            axios.get('/api/posts')
+            .then( res => {
+                console.log(res.data.data)
+                this.post = res.data.data
+            })
         }
     }
 }
