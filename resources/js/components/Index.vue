@@ -4,6 +4,7 @@
         <div ref="dropzone" class="p-5 bg-black text-center text-light btn d-block">
             Upload
         </div>
+        <vue-editor useCustomImageHandler @image-added="handleImageAdded" v-model="content" />
         <input @click.prevent="store" type="submit" class="btn btn-primary">
         <div v-if="post">
             <div>{{ post.title}}</div>
@@ -11,19 +12,23 @@
                 <img :src="image.preview_url" alt="">
                 <img :src="image.url" alt="">
             </div>
+            <div class="ql-editor" v-html="post.content"></div>
         </div>
     </div>
 </template>
 
 <script>
+import { VueEditor } from "vue2-editor";
 import Dropzone from 'dropzone'
 export default {
     name: "Index",
+    components: { VueEditor },
     data() {
         return {
             dropzone: null,
             title: '',
-            post: null
+            post: null,
+            content: null
         }
     },
     mounted() {
@@ -43,6 +48,8 @@ export default {
             })
             data.append('title', this.title)
             this.title = ''
+            data.append('content', this.content)
+            this.content = ''
             axios.post('/api/posts', data)
             .then( res => {
                 this.getPost();
@@ -51,9 +58,22 @@ export default {
         getPost() {
             axios.get('/api/posts')
             .then( res => {
-                console.log(res.data.data)
                 this.post = res.data.data
             })
+        },
+        handleImageAdded(file, Editor, cursorLocation, resetUploader) {
+            const formData = new FormData();
+            formData.append("image", file);
+
+            axios.post("/api/posts/images", formData)
+                .then(result => {
+                    const url = result.data.url; // Get url from response
+                    Editor.insertEmbed(cursorLocation, "image", url);
+                    resetUploader();
+                })
+                .catch(err => {
+                    console.log(err);
+                });
         }
     }
 }
