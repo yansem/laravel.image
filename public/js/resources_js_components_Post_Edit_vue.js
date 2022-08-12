@@ -24,6 +24,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -38,7 +39,8 @@ __webpack_require__.r(__webpack_exports__);
         title: null,
         content: null
       },
-      imageIdsForDelete: []
+      imageIdsForDelete: [],
+      imageUrlsForDelete: []
     };
   },
   mounted: function mounted() {
@@ -67,8 +69,11 @@ __webpack_require__.r(__webpack_exports__);
 
       data.append('content', this.post.content); // this.content = ''
 
-      this.imageIdsForDelete.forEach(function (url) {
-        data.append('imageIdsForDelete[]', url);
+      this.imageIdsForDelete.forEach(function (id) {
+        data.append('imageIdsForDelete[]', id);
+      });
+      this.imageUrlsForDelete.forEach(function (url) {
+        data.append('imageUrlsForDelete[]', url);
       });
       data.append('_method', 'PATCH');
       axios.post("/api/posts/".concat(this.$route.params.id), data).then(function (res) {
@@ -109,6 +114,9 @@ __webpack_require__.r(__webpack_exports__);
       })["catch"](function (err) {
         console.log(err);
       });
+    },
+    handleImageRemoved: function handleImageRemoved(url) {
+      this.imageUrlsForDelete.push(url);
     }
   }
 });
@@ -14391,7 +14399,10 @@ var render = function () {
       _vm._v(" "),
       _c("vue-editor", {
         attrs: { useCustomImageHandler: "" },
-        on: { "image-added": _vm.handleImageAdded },
+        on: {
+          "image-removed": _vm.handleImageRemoved,
+          "image-added": _vm.handleImageAdded,
+        },
         model: {
           value: _vm.post.content,
           callback: function ($$v) {

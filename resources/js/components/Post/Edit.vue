@@ -4,7 +4,8 @@
         <div ref="dropzone" class="p-5 bg-black text-center text-light btn d-block">
             Upload
         </div>
-        <vue-editor useCustomImageHandler @image-added="handleImageAdded" v-model="post.content" />
+        <vue-editor useCustomImageHandler @image-removed="handleImageRemoved" @image-added="handleImageAdded"
+                    v-model="post.content" />
         <input @click.prevent="update" type="submit" class="btn btn-primary" value="Update">
     </div>
 </template>
@@ -22,7 +23,8 @@ export default {
                 title: null,
                 content: null
             },
-            imageIdsForDelete: []
+            imageIdsForDelete: [],
+            imageUrlsForDelete: []
         }
     },
     mounted() {
@@ -48,8 +50,11 @@ export default {
             // this.title = ''
             data.append('content', this.post.content)
             // this.content = ''
-            this.imageIdsForDelete.forEach( url => {
-                data.append('imageIdsForDelete[]', url)
+            this.imageIdsForDelete.forEach( id => {
+                data.append('imageIdsForDelete[]', id)
+            })
+            this.imageUrlsForDelete.forEach( url => {
+                data.append('imageUrlsForDelete[]', url)
             })
             data.append('_method', 'PATCH')
             axios.post(`/api/posts/${this.$route.params.id}`, data)
@@ -86,6 +91,10 @@ export default {
                 .catch(err => {
                     console.log(err);
                 });
+        },
+
+        handleImageRemoved(url) {
+            this.imageUrlsForDelete.push(url)
         }
     }
 }

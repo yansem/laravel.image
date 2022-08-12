@@ -18,6 +18,13 @@ class UpdateController extends Controller
         $imageIdsForDelete = $data['imageIdsForDelete'] ?? null;
         $newImages = $data['images'] ?? null;
         $currentImages = $post->images ?? null;
+        $imageUrlsForDelete = $data['imageUrlsForDelete'] ?? null;
+        if ($imageUrlsForDelete) {
+            unset($data['imageUrlsForDelete']);
+            foreach ($imageUrlsForDelete as $url) {
+                Storage::disk('public')->delete(str_replace($request->root() . '/storage/', '', $url));
+            }
+        }
         if ($imageIdsForDelete) {
             unset($data['imageIdsForDelete']);
             foreach ($currentImages as $currentImage) {
