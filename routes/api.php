@@ -20,6 +20,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::group(['prefix' => 'posts', 'namespace' => 'Post'], function () {
     Route::post('/', 'StoreController');
     Route::get('/', 'IndexController');
+    Route::get('/{post}/edit', 'EditController');
+    Route::patch('/{post}', 'UpdateController');
     Route::group(['namespace' => 'Image', 'prefix' => 'images'], function () {
         Route::post('/', 'StoreController');
     });
